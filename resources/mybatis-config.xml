@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+   <typeAliases>
+	    <typeAlias type="com.sesoc.cl.vo.Users" alias="Users"/>
+	    <typeAlias type="com.sesoc.cl.vo.ClassInfo" alias="ClassInfo"/>
+		<typeAlias type="com.sesoc.cl.vo.ClassCount" alias="ClassCount"/>
+		<typeAlias type="com.sesoc.cl.vo.ClassUser" alias="ClassUser"/>
+		<typeAlias type="com.sesoc.cl.board.Board" alias="Board"/>
+		<typeAlias type="com.sesoc.cl.board.Board_Reply" alias="Reply"/>    
+   		<typeAlias type="com.sesoc.cl.drive.Drive" alias="Drive"/>
+   		<typeAlias type="com.sesoc.cl.board.Board_File" alias="Board_File"/>
+   		<typeAlias type="com.sesoc.cl.vo.SavedLessonInfo" alias="SavedLessonInfo"/>
+		<typeAlias type="com.sesoc.cl.vo.Task" alias="Task"/>
+		<typeAlias type="com.sesoc.cl.vo.Task_Answer" alias="Task_Answer"/>
+		<typeAlias type="com.sesoc.cl.vo.Task_Answers" alias="Task_Answers"/>
+		<typeAlias type="com.sesoc.cl.vo.Task_Submit" alias="Task_Submit"/>
+		<typeAlias type="com.sesoc.cl.drive.Drive_File" alias="Drive_File"/>
+   </typeAliases>
+   <mappers>
+      <mapper resource="mapper/usersmapper.xml"/>
+      <mapper resource="mapper/classInfoMapper.xml"/>
+      <mapper resource="mapper/boardMapper.xml" />
+      <mapper resource="mapper/replyMapper.xml" />
+      <mapper resource="mapper/driveMapper.xml" />
+      <mapper resource="mapper/passedLessonMapper.xml"/>
+      <mapper resource="mapper/taskMapper.xml"/>
+      <mapper resource="mapper/taskSubmitMapper.xml"/>
+   </mappers>
+</configuration>

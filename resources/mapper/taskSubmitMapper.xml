@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesoc.cl.dao.Task_SubmitDAO">
+
+<select id="getNamebyUsers" resultType="String" parameterType="String">
+SELECT name
+FROM users
+WHERE id = #{id}
+</select>
+
+<insert id="insert_Submit" parameterType="Task_Submit">
+INSERT INTO task_submit VALUES(
+	task_submit_seq.nextval,
+	#{task_num},
+	#{user_id},
+	#{submit_file},
+	sysdate
+)
+</insert>
+
+<select id="select_submitList" resultType="Task_Submit" parameterType="Task">
+SELECT 
+    s.num,
+    s.task_num,
+    s.user_id,
+    s.submit_file,
+    s.submit_time,
+    t.title,
+    u.NAME
+FROM task_submit s, users u, task t
+WHERE s.TASK_NUM = #{num}
+AND s.task_num = t.NUM
+AND s.user_id = u.id
+order by s.submit_time
+</select>
+
+<select id="selectOne" resultType="Task_Submit" parameterType="Task_Submit">
+SELECT *
+FROM task_submit
+WHERE task_num = #{task_num}
+AND user_id = #{user_id}
+</select>
+
+</mapper>

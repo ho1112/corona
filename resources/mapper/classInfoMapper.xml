@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.sesoc.cl.dao.ClassInfoDao">
+	<insert id="createClass" parameterType="ClassInfo">
+		insert into class_info values(class_info_seq.NEXTVAL, #{name}, #{teacher_id}, #{is_public} )
+	</insert>
+	<select id="selectMyAll" parameterType="String" resultType="ClassInfo">
+		select * from class_info where teacher_Id = #{teacher_id}
+	</select>
+	<select id="selectCount" parameterType="String" resultType="ClassCount">
+		select class_info.num, count(class_user.NUM) usernum
+		from class_info left outer join class_user
+		on class_info.num = class_user.CLASS_NUM and not class_user.STATUS = 'withdraw' 
+		group by class_info.num
+	</select>
+	<select id="selectSearchCount" parameterType="map" resultType="ClassCount" >
+		select class_info.num, count(class_user.NUM) usernum
+		from class_info left outer join class_user
+		on class_info.num = class_user.CLASS_NUM and not class_user.STATUS = 'withdraw' 
+		group by class_info.num,
+		<if test="searchType =='name'">class_info.name having name like '%'||#{searchWord}||'%' </if>
+		<if test="searchType =='teacher_id'">class_info.teacher_id having teacher_id = #{searchWord} </if>
+		order by num
+	</select>
+	
+	<select id="checkClassName" parameterType="String" resultType="ClassInfo">
+		select * from class_info where name = #{name}
+	</select>
+	<select id="selectUserAll" parameterType="int" resultType="ClassUser">
+		select * from class_user where class_num = #{class_num}
+	</select>
+	<select id="selectClassOne" parameterType="int" resultType="ClassInfo">
+		select * from class_info where num = #{num}
+	</select>
+	<select id="selectRequestClassOne" parameterType="int" resultType="ClassUser">
+		select * from class_user where class_num = #{num}
+	</select>
+	<update id="updateStatus" parameterType="map">
+		update class_user set status = #{status} where num = #{num}
+	</update>
+	<delete id="deleteRetired" parameterType="int">
+		delete from class_user where num = #{num}
+	</delete>
+	<select id="selectSearch" parameterType="map" resultType="ClassInfo">
+		select DISTINCT i.num, i.name, i.TEACHER_ID, i.IS_PUBLIC
+		from class_user u, class_info i
+		where u.class_num (+) = i.num
+		and i.num not in (select class_user.class_num
+		from class_user
+		where class_user.user_id = #{user_id})
+		and i.teacher_id != #{user_id} and 
+		<if test="searchType == 'teacher_id'">i.teacher_id = #{searchWord}</if>
+		<if test="searchType == 'name'">i.name like '%'||#{searchWord}||'%'</if>
+		 and i.is_public = 'y' order by i.num
+	</select>
+	<select id="selectMyRequestAll" parameterType="String" resultType="ClassUser">
+		select * from
+		class_User where user_id = #{user_id} and status = 'student' or status = 'request'
+	</select>
+	<select id="selectDuplicateCheckOne" parameterType="ClassUser"
+		resultType="ClassUser">
+		select * from class_user where user_id = #{user_id} and
+		class_num = #{class_num} and not status = 'withdraw'
+	</select>
+	<insert id='insertClassUser' parameterType="ClassUser">
+		insert into class_user values(
+			class_user_seq.NEXTVAL, #{class_num}, #{user_id}, 'request'
+		)
+	</insert>
+	<select id="myStudentList" parameterType="String" resultType="ClassInfo">
+		select i.NUM, i.name , i.TEACHER_ID, i.IS_PUBLIC from class_user u, CLASS_INFO i 
+		where u.CLASS_NUM = i.NUM and u.user_id = #{user_id} and not u.STATUS = 'request' and not u.status = 'withdraw'
+	</select>
+	<select id="myTeacherList" parameterType="String" resultType="ClassInfo">
+		Select * from Class_Info where Teacher_id = #{id} order by num
+	</select>
+	<update id="changeClassState" parameterType="map">
+		update class_info
+		<if test="state == 1">set is_public = 'y'</if>
+		<if test="state == 0">set is_public = 'n'</if>
+		where num = #{classNum}
+	</update>
+</mapper>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesoc.cl.dao.PassedLessonDao">
+
+<!-- 전체 글 개수 불러오기 -->
+<select id="getPassedLessonCount" resultType="int" parameterType="map">
+	select count(*) from passed_lesson where 
+	class_num = #{class_num} and
+	title LIKE '%' || #{searchword}||'%'
+</select>
+
+<!--  지난 강의 저장    -->
+<insert id="saveLesson" parameterType="SavedLessonInfo">
+	INSERT INTO passed_lesson (
+		num,
+		class_num,
+		title,
+		saved_code,
+		saved_audio
+	)
+	VALUES(
+		passed_lesson_seq.nextval,
+		#{class_num},
+		#{title},
+		#{saved_code},
+		#{saved_audio}
+	)
+</insert>
+
+<select id="loadSavedLesson" parameterType="map" resultType="SavedLessonInfo">
+	select *
+	from passed_lesson
+	where class_num = #{class_num} and
+	title LIKE '%' || #{searchword}||'%' order by num desc
+</select>
+
+	
+</mapper>

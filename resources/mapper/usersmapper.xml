@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesoc.cl.dao.UsersDAO">
+
+<!-- 아이디와 비밀번호를 받아서 일치하는 객체를 반환해 준다. -->
+<select id="login" resultType="Users" parameterType="Users">
+  	SELECT
+  	id,
+  	password,
+  	email,
+  	is_deleted,
+  	name,
+  	img_name
+  	FROM Users
+  	WHERE id = #{id}
+  	AND password = #{password}
+  	AND is_deleted = 'n'
+</select>
+
+<!--  아이디 중복 검사    -->
+<select id="idcheck" resultType="String" parameterType="String">
+	SELECT
+	id
+	FROM Users
+	WHERE id = #{id}
+</select>
+
+<select id="emailcheck" resultType="String" parameterType="String">
+	SELECT
+	id
+	FROM Users
+	WHERE email = #{email}
+</select>
+
+<!--  회원 가입    -->
+<insert id="register" parameterType="Users">
+	INSERT INTO Users VALUES(
+		#{id},
+		#{password},
+		#{email},
+		#{is_deleted},
+		#{name},
+		#{img_name}
+	)
+</insert>
+
+<!--  id만 받아서 해당 User객체를 받아오는 메소드    -->
+<select id="selectOne" resultType="Users" parameterType="Users">
+	SELECT
+	id,
+	password,
+	email,
+	is_deleted
+	FROM Users
+	WHERE id = #{id}
+</select>
+
+
+<!--  회원 정보 수정    -->
+<update id="update" parameterType="Users">
+	UPDATE Users SET
+	password = #{password},
+	img_name = #{img_name}
+	WHERE id = #{id}
+</update>
+
+
+<!--  회원 탈퇴 ( is_deleted = 'Y' 처리 )  -->
+<update id="unregister" parameterType="Users">
+	UPDATE Users SET
+	is_deleted = 'Y'
+	WHERE id = #{id}
+</update>
+
+
+<!--  class_user 테이블에 남아있는 회원정보 삭제처리  -->
+<delete id="delete_class_user" parameterType="Users">
+	DELETE FROM class_user
+	WHERE user_id = #{id}
+</delete>
+
+<select id="unregisterCheck" parameterType="map" resultType="Users">
+	Select * from Users where id = #{id} AND password = #{password}
+</select>
+
+<select id="allList" resultType="Users">
+	Select * from Users
+</select>
+</mapper>

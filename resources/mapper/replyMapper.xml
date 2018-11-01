@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sesoc.cl.board.Board_ReplyDAO">
+	
+	<!-- 댓글 추가 -->
+	<insert id="insert" parameterType="Reply">
+	INSERT INTO board_reply 
+	(num,board_num,user_id,content,parent,depth,reorder)
+	values
+	(
+		board_reply_seq.nextval,
+		#{board_num},
+		#{user_id},
+		#{content},
+		<choose>
+            <when test="parent==0">0, 0,</when>
+            <otherwise>#{parent}, #{depth},</otherwise>
+        </choose>
+		#{reorder}
+	)
+	</insert>
+	
+	<!-- 선택된 게시글의 댓글 리스트 호출 -->
+	<select id="select" parameterType="int" resultType="Reply">
+	SELECT * FROM board_reply WHERE board_num = #{boardnum} order by reorder asc
+	</select>
+	
+	<!-- 부모댓글의 마지막 답글 reoreder를 추출하기 위한 쿼리  -->
+	<select id="selectOne" parameterType="int" resultType="Reply">
+	SELECT * FROM board_reply where num=(SELECT max(num) FROM board_reply WHERE parent=#{num})
+	</select>
+	
+	<!-- 첫 답글일 경우 부모댓글의 정보를 가져오기 위한 쿼리 -->
+	<select id="findOne" parameterType="int" resultType="Reply">
+	SELECT * FROM board_reply where num=#{parent}
+	</select>
+	
+	<!-- 해당 게시글의 맨 마지막 reorder를 알아내기 위한 쿼리 -->
+	<select id="maxOrder" parameterType="int" resultType="int">
+	SELECT NVL(MAX(REORDER),0)+1 FROM board_reply WHERE board_num=#{board_num}
+	</select>
+	
+	<!-- 답글이 달릴 경우 그 이후 댓글의 reorder 수정을 위한 쿼리 -->
+	<update id="updateorder" parameterType="map">
+	UPDATE board_reply SET reorder = reorder +1 
+	WHERE board_num=#{board_num} AND reorder > #{reorder} 
+	</update>
+	
+	<!-- 댓글 수정 -->
+	<update id="update" parameterType="Reply">
+	UPDATE board_reply SET content = #{content} WHERE num = #{num} 
+	</update>
+	
+	<!-- 댓글 삭제 -->
+	<delete id="delete" parameterType="int">
+	DELETE board_reply WHERE num = #{num}
+	</delete>
+	
+</mapper>
